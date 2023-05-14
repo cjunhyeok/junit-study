@@ -26,20 +26,19 @@ public class BookService {
     @Transactional(rollbackFor = RuntimeException.class) // runtime exception 발생 시 롤백
     public BookResponseDto registerBook(BookSaveRequestDto dto) {
 
-
         Book savedBook = bookRepository.save(dto.toEntity());
         if (savedBook != null) {
             if (!mailSender.send()) {
                 throw new RuntimeException("메일이 전송되지 않았습니다.");
             }
         }
-        return new BookResponseDto().toDto(savedBook);
+        return savedBook.toDto();
     }
 
     // 책 목록 조회
     public List<BookResponseDto> findAllBooks() {
         return bookRepository.findAll().stream()
-                .map(new BookResponseDto()::toDto)
+                .map(Book::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -47,7 +46,7 @@ public class BookService {
     public BookResponseDto findOne(Long id) {
         Optional<Book> findBookOptional = bookRepository.findById(id);
         if (findBookOptional.isPresent()) {
-            return new BookResponseDto().toDto(findBookOptional.get());
+            return findBookOptional.get().toDto();
         } else {
             throw new RuntimeException("Id not exist");
         }
