@@ -58,12 +58,13 @@ public class BookService {
     }
 
     @Transactional(rollbackFor = RuntimeException.class)
-    public void update(Long id, BookResponseDto dto) {
+    public BookResponseDto update(Long id, BookSaveRequestDto dto) {
         Optional<Book> findBookOptional = bookRepository.findById(id);
 
         if (findBookOptional.isPresent()) {
             Book findBook = findBookOptional.get();
             findBook.update(dto.getTitle(), dto.getAuthor());
+            return findBook.toDto();
         } else {
             throw new RuntimeException("Id not exist");
         }
