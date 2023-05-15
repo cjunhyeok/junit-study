@@ -3,8 +3,9 @@ package com.example.junitstudy.service;
 import com.example.junitstudy.domain.Book;
 import com.example.junitstudy.domain.BookRepository;
 import com.example.junitstudy.util.MailSender;
-import com.example.junitstudy.web.dto.BookResponseDto;
-import com.example.junitstudy.web.dto.BookSaveRequestDto;
+import com.example.junitstudy.web.dto.response.BookListResponseDto;
+import com.example.junitstudy.web.dto.response.BookResponseDto;
+import com.example.junitstudy.web.dto.request.BookSaveRequestDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -63,10 +64,10 @@ class BookServiceTest {
         when(bookRepository.findAll()).thenReturn(books);
 
         // when
-        List<BookResponseDto> findBooksDto = bookService.findAllBooks();
+        BookListResponseDto findBooksDto = bookService.findAllBooks();
 
         // then
-        assertThat(findBooksDto.get(0).getTitle()).isEqualTo(books.get(0).getTitle());
+        assertThat(findBooksDto.getItems().get(0).getTitle()).isEqualTo(books.get(0).getTitle());
     }
 
     @Test
