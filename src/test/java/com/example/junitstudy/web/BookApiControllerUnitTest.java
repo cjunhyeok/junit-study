@@ -1,6 +1,7 @@
 package com.example.junitstudy.web;
 
 import com.example.junitstudy.service.BookService;
+import com.example.junitstudy.web.dto.request.BookSaveRequestDto;
 import com.example.junitstudy.web.dto.response.BookListResponseDto;
 import com.example.junitstudy.web.dto.response.BookResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -98,5 +99,26 @@ public class BookApiControllerUnitTest {
 
         // bookService의 delete 메서드가 bookId 인자로 호출되었는지 확인할 수도 있습니다.
          verify(bookService).delete(bookId);
+    }
+
+    @Test
+    void updateTest() throws Exception {
+
+        // given
+        Long bookId = 1L;
+        BookSaveRequestDto bookSaveRequestDto = new BookSaveRequestDto();
+        bookSaveRequestDto.setTitle("Updated Title");
+        bookSaveRequestDto.setAuthor("Updated Author");
+
+        // PUT 요청 및 응답 검증
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/book/{id}", bookId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(bookSaveRequestDto)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(1))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.msg").value("success"));
+
+        // bookService의 update 메서드가 bookId와 bookSaveRequestDto 인자로 호출되었는지 확인할 수도 있습니다.
+        // verify(bookService).update(bookId, bookSaveRequestDto);
     }
 }
