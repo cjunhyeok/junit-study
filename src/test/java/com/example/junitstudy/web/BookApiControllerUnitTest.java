@@ -32,6 +32,8 @@ public class BookApiControllerUnitTest {
 
     @Test
     void booksTest() throws Exception {
+
+        // given
         List<BookResponseDto> bookList = new ArrayList<>();
         bookList.add(BookResponseDto.builder()
                 .title("title")
@@ -43,7 +45,7 @@ public class BookApiControllerUnitTest {
                 .build());
         BookListResponseDto dto = BookListResponseDto.builder().items(bookList).build();
 
-        // Mock 서비스 응답 설정
+        // Mock 서비스 응답 설정 (stub)
         given(bookService.findAllBooks()).willReturn(dto);
 
         // GET 요청 응답 검증
@@ -56,5 +58,27 @@ public class BookApiControllerUnitTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.body.items[1].title").value("title2"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.body.items[0].author").value("author"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.body.items[1].author").value("author2"));
+    }
+
+    @Test
+    void bookTest() throws Exception {
+
+        // given
+        BookResponseDto bookResponseDto = BookResponseDto.builder()
+                .id(1L)
+                .title("title")
+                .author("author")
+                .build();
+
+        // stub
+        given(bookService.findOne(1L)).willReturn(bookResponseDto);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/book/1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(1))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.msg").value("success"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.body.title").value("title"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.body.author").value("author"));
     }
 }
